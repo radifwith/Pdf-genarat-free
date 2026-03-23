@@ -1,0 +1,2854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>⚡ AllFile Tool Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #0b0d12;
+    --surface:  #111520;
+    --surface2: #161b2a;
+    --border:   #1e2535;
+    --accent:   #4fffb0;
+    --accent2:  #4f9fff;
+    --accent3:  #ff4f9f;
+    --text:     #dce4f0;
+    --muted:    #5a6480;
+    --success:  #4fffb0;
+    --error:    #ff4f6f;
+    --warn:     #ffcc4f;
+    --radius:   10px;
+    --mono:     'Space Mono', monospace;
+    --display:  'Syne', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(79,255,176,.08) 0%, transparent 70%),
+      repeating-linear-gradient(0deg,transparent,transparent 39px,var(--border) 40px),
+      repeating-linear-gradient(90deg,transparent,transparent 39px,var(--border) 40px);
+  }
+
+  /* HEADER */
+  header{
+    text-align:center;
+    padding:40px 20px 28px;
+    position:relative;
+  }
+  header h1{
+    font-family:var(--display);
+    font-size:clamp(28px,5vw,48px);
+    font-weight:800;
+    letter-spacing:-1px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  header p{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:8px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+  }
+  .badge{
+    display:inline-flex;gap:6px;margin-top:14px;flex-wrap:wrap;justify-content:center;
+  }
+  .badge span{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    color:var(--accent);
+    font-size:10px;
+    padding:3px 10px;
+    border-radius:99px;
+    letter-spacing:1px;
+  }
+
+  /* CONTAINER */
+  .container{max-width:1100px;margin:0 auto;padding:0 16px 60px;}
+
+  /* TABS */
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px;overflow-x:auto;}
+  .tab-btn{
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:700;
+    color:var(--muted);
+    background:transparent;
+    border:none;
+    padding:12px 18px;
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    margin-bottom:-2px;
+    transition:all .2s;
+    white-space:nowrap;
+    letter-spacing:.5px;
+  }
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab-pane{display:none;}
+  .tab-pane.active{display:block;}
+
+  /* CARD */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:16px;
+  }
+
+  /* GRID */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  /* FORM ELEMENTS */
+  label{
+    display:block;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  input[type=text],input[type=password],input[type=number],
+  textarea,select{
+    width:100%;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    padding:10px 14px;
+    outline:none;
+    transition:border .2s;
+    appearance:none;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+  select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6480' fill='none' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+  textarea{resize:vertical;min-height:120px;line-height:1.6;}
+
+  /* RANGE */
+  .range-wrap{display:flex;align-items:center;gap:10px;}
+  input[type=range]{flex:1;accent-color:var(--accent);}
+  .range-val{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:3px 10px;
+    font-size:12px;
+    min-width:36px;
+    text-align:center;
+    color:var(--accent);
+  }
+
+  /* CHECKBOX */
+  .check-row{display:flex;align-items:center;gap:10px;padding:8px 0;}
+  input[type=checkbox]{
+    width:16px;height:16px;
+    accent-color:var(--accent);
+    cursor:pointer;
+  }
+  .check-row label{margin:0;text-transform:none;font-size:13px;color:var(--text);cursor:pointer;}
+
+  /* COLOR PICKER */
+  .color-wrap{display:flex;align-items:center;gap:10px;}
+  input[type=color]{
+    width:44px;height:36px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:none;
+    cursor:pointer;
+    padding:2px;
+  }
+  .color-hex{
+    flex:1;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    padding:8px 12px;
+    outline:none;
+  }
+  .color-hex:focus{border-color:var(--accent);}
+
+  /* RADIO GROUP */
+  .radio-group{display:flex;gap:8px;flex-wrap:wrap;}
+  .radio-opt{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:7px 16px;
+    font-size:12px;
+    cursor:pointer;
+    transition:all .15s;
+    user-select:none;
+  }
+  .radio-opt.selected{background:rgba(79,255,176,.12);border-color:var(--accent);color:var(--accent);}
+
+  /* SECTION TITLE */
+  .sec-title{
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* FIELD GROUP */
+  .field{margin-bottom:14px;}
+
+  /* BUTTONS */
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:700;
+    border:none;
+    border-radius:var(--radius);
+    padding:12px 28px;
+    cursor:pointer;
+    transition:all .18s;
+    letter-spacing:.5px;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:#0b0d12;
+  }
+  .btn-primary:hover{background:#3de89a;transform:translateY(-1px);box-shadow:0 4px 20px rgba(79,255,176,.25);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  .btn-secondary{
+    background:var(--surface2);
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-secondary:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  /* STATUS */
+  .status{
+    padding:12px 16px;
+    border-radius:var(--radius);
+    font-size:13px;
+    margin-top:12px;
+    border:1px solid transparent;
+    display:none;
+  }
+  .status.success{background:rgba(79,255,176,.08);border-color:rgba(79,255,176,.25);color:var(--success);}
+  .status.error{background:rgba(255,79,111,.08);border-color:rgba(255,79,111,.25);color:var(--error);}
+  .status.loading{background:rgba(79,159,255,.08);border-color:rgba(79,159,255,.25);color:var(--accent2);display:flex;align-items:center;gap:10px;}
+
+  /* SPINNER */
+  .spin{
+    width:16px;height:16px;
+    border:2px solid rgba(79,159,255,.3);
+    border-top-color:var(--accent2);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    flex-shrink:0;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* DOWNLOAD BTN */
+  .download-area{
+    margin-top:14px;
+    padding:20px;
+    border:2px dashed var(--border);
+    border-radius:var(--radius);
+    text-align:center;
+    display:none;
+  }
+  .download-area.show{display:block;}
+  .download-area a{
+    color:var(--accent);
+    font-size:14px;
+    font-weight:700;
+    text-decoration:none;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .download-area a:hover{color:#3de89a;}
+
+  /* FILE UPLOAD */
+  .file-drop{
+    border:2px dashed var(--border);
+    border-radius:var(--radius);
+    padding:32px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .2s;
+    position:relative;
+  }
+  .file-drop:hover{border-color:var(--accent2);background:rgba(79,159,255,.04);}
+  .file-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .file-drop-icon{font-size:28px;margin-bottom:8px;}
+  .file-drop-text{color:var(--muted);font-size:12px;}
+  .file-drop-name{color:var(--accent2);margin-top:6px;font-size:12px;}
+
+  /* READ OUTPUT */
+  #r-out{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    min-height:200px;
+    white-space:pre-wrap;
+    line-height:1.7;
+    font-size:13px;
+    color:var(--text);
+    overflow:auto;
+    max-height:400px;
+  }
+
+  /* CODE BLOCK */
+  pre{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    overflow-x:auto;
+    font-size:12px;
+    line-height:1.6;
+  }
+  code{color:var(--accent2);}
+
+  /* MAIN LAYOUT */
+  .gen-layout{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;}
+  @media(max-width:800px){.gen-layout{grid-template-columns:1fr;}}
+
+  /* TAG PILL */
+  .tag{
+    display:inline-block;
+    background:rgba(79,255,176,.1);
+    color:var(--accent);
+    border:1px solid rgba(79,255,176,.2);
+    border-radius:6px;
+    font-size:10px;
+    padding:2px 8px;
+    letter-spacing:1px;
+  }
+
+  /* API DOCS */
+  .api-method{
+    display:inline-block;
+    background:var(--accent);
+    color:#0b0d12;
+    font-size:10px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:4px;
+    letter-spacing:1px;
+    margin-right:8px;
+  }
+  .endpoint{
+    color:var(--accent2);
+    font-size:14px;
+    font-weight:700;
+    word-break:break-all;
+  }
+  h3{font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text);}
+  h4{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{width:6px;height:6px;}
+  ::-webkit-scrollbar-track{background:var(--surface);}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ AllFile Tool Pro</h1>
+  <p>Powered by Rafidmondal / allfile-tool</p>
+  <div class="badge">
+    <span>PDF</span><span>HTML</span><span>TXT</span>
+    <span>DOCX</span><span>CSV</span><span>JSON</span><span>MARKDOWN</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('generate')">📄 Generate</button>
+    <button class="tab-btn" onclick="switchTab('read')">📖 Read</button>
+    <button class="tab-btn" onclick="switchTab('edit')">✏️ Edit</button>
+    <button class="tab-btn" onclick="switchTab('apidocs')">📡 API Docs</button>
+  </div>
+
+  <!-- ════════ GENERATE ════════ -->
+  <div id="tab-generate" class="tab-pane active">
+    <div class="gen-layout">
+
+      <!-- LEFT: Main inputs -->
+      <div>
+        <div class="card">
+          <div class="sec-title">Authentication</div>
+          <div class="field">
+            <label>🔑 API Key</label>
+            <input type="password" id="g-key" value="raxzen_file_create_key" placeholder="Enter API Key"/>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">Document Content</div>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="g-title" placeholder="My Document"/>
+          </div>
+          <div class="field">
+            <label>Content</label>
+            <textarea id="g-text" rows="12" placeholder="Type your content here..."></textarea>
+          </div>
+          <div class="field">
+            <label>File Type</label>
+            <select id="g-type" onchange="onTypeChange()">
+              <option>PDF</option>
+              <option>HTML</option>
+              <option>TXT</option>
+              <option>DOCX</option>
+              <option>CSV</option>
+              <option>JSON</option>
+              <option>Markdown</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Options -->
+      <div>
+        <!-- PDF Options -->
+        <div class="card" id="opt-pdf">
+          <div class="sec-title">PDF Options</div>
+          <div class="field">
+            <label>Font Size — <span id="fs-val">12</span>px</label>
+            <div class="range-wrap">
+              <input type="range" id="g-fs" min="8" max="32" value="12"
+                     oninput="document.getElementById('fs-val').textContent=this.value"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Page Size</label>
+            <div class="radio-group">
+              <div class="radio-opt selected" onclick="selectRadio(this,'g-ps')">A4</div>
+              <div class="radio-opt" onclick="selectRadio(this,'g-ps')">Letter</div>
+            </div>
+            <input type="hidden" id="g-ps" value="A4"/>
+          </div>
+          <div class="field">
+            <label>Background Color</label>
+            <div class="color-wrap">
+              <input type="color" id="g-bg-pick" value="#ffffff" oninput="syncColor('g-bg-pick','g-bg-hex')"/>
+              <input type="text" class="color-hex" id="g-bg-hex" value="#ffffff" oninput="syncHex('g-bg-hex','g-bg-pick')" maxlength="7"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Text Color</label>
+            <div class="color-wrap">
+              <input type="color" id="g-tc-pick" value="#000000" oninput="syncColor('g-tc-pick','g-tc-hex')"/>
+              <input type="text" class="color-hex" id="g-tc-hex" value="#000000" oninput="syncHex('g-tc-hex','g-tc-pick')" maxlength="7"/>
+            </div>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="g-brd"/>
+            <label for="g-brd">Add Border</label>
+          </div>
+        </div>
+
+        <!-- HTML Options -->
+        <div class="card" id="opt-html" style="display:none;">
+          <div class="sec-title">HTML Options</div>
+          <div class="field">
+            <label>Theme</label>
+            <select id="g-theme"><option>Light</option><option>Dark</option><option>Ocean</option><option>Sunset</option></select>
+          </div>
+          <div class="field">
+            <label>Font Family</label>
+            <select id="g-font"><option>Default</option><option>Serif</option><option>Mono</option><option>Modern</option></select>
+          </div>
+          <div class="field">
+            <label>Custom CSS</label>
+            <textarea id="g-css" rows="3" placeholder="h1 { color: red; }"></textarea>
+          </div>
+        </div>
+
+        <!-- TXT Options -->
+        <div class="card" id="opt-txt" style="display:none;">
+          <div class="sec-title">TXT Options</div>
+          <div class="check-row">
+            <input type="checkbox" id="g-ln"/>
+            <label for="g-ln">Add Line Numbers</label>
+          </div>
+          <div class="field" style="margin-top:12px;">
+            <label>Line Separator</label>
+            <select id="g-sep"><option>None</option><option>Dashes</option><option>Equals</option><option>Stars</option></select>
+          </div>
+        </div>
+
+        <!-- DOCX Options -->
+        <div class="card" id="opt-docx" style="display:none;">
+          <div class="sec-title">DOCX Options</div>
+          <div class="field">
+            <label>Font</label>
+            <select id="g-df"><option>Arial</option><option>Times New Roman</option><option>Calibri</option></select>
+          </div>
+          <div class="field">
+            <label>Alignment</label>
+            <select id="g-da"><option>Left</option><option>Center</option><option>Right</option><option>Justify</option></select>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="g-db" checked/>
+            <label for="g-db">Bold Title</label>
+          </div>
+        </div>
+
+        <!-- CSV Options -->
+        <div class="card" id="opt-csv" style="display:none;">
+          <div class="sec-title">CSV Options</div>
+          <div class="field">
+            <label>Delimiter</label>
+            <select id="g-cd"><option>Comma</option><option>Tab</option><option>Semicolon</option><option>Pipe</option></select>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button class="btn btn-primary" id="g-btn" onclick="doGenerate()" style="width:100%;">
+          🚀 Generate File
+        </button>
+
+        <div id="g-status" class="status"></div>
+        <div id="g-download" class="download-area">
+          <div style="color:var(--muted);font-size:11px;margin-bottom:10px;letter-spacing:1px;">FILE READY</div>
+          <a id="g-dl-link" href="#" target="_blank">⬇️ Download File</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ READ ════════ -->
+  <div id="tab-read" class="tab-pane">
+    <div class="card">
+      <div class="sec-title">Authentication</div>
+      <div class="field">
+        <label>🔑 API Key</label>
+        <input type="password" id="r-key" value="raxzen_file_create_key"/>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-title">Upload File</div>
+      <div class="file-drop" onclick="document.getElementById('r-file-input').click()">
+        <input type="file" id="r-file-input" accept=".pdf,.docx,.html,.csv,.json"
+               onchange="onFileSelect()" style="display:none"/>
+        <div class="file-drop-icon">📂</div>
+        <div class="file-drop-text">Click to upload — PDF, DOCX, HTML, CSV, JSON</div>
+        <div class="file-drop-name" id="r-file-name"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <button class="btn btn-primary" id="r-btn" onclick="doRead()">📖 Read File</button>
+    </div>
+    <div id="r-status" class="status"></div>
+    <div class="card" style="margin-top:12px;" id="r-result-card" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div class="sec-title" style="margin-bottom:0;">Extracted Content</div>
+        <span id="r-info" class="tag"></span>
+      </div>
+      <div id="r-out">Extracted content will appear here…</div>
+    </div>
+  </div>
+
+  <!-- ════════ EDIT ════════ -->
+  <div id="tab-edit" class="tab-pane">
+    <div class="card">
+      <div class="sec-title">Authentication</div>
+      <div class="field">
+        <label>🔑 API Key</label>
+        <input type="password" id="e-key" value="raxzen_file_create_key"/>
+      </div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="card" style="height:100%;">
+          <div class="sec-title">Input Text</div>
+          <textarea id="e-in" rows="14" placeholder="Paste your text here…"></textarea>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="sec-title">Action</div>
+          <div class="field">
+            <select id="e-act" onchange="onActionChange()">
+              <option>Find &amp; Replace</option>
+              <option>Add Prefix/Suffix</option>
+              <option>UPPERCASE</option>
+              <option>lowercase</option>
+              <option>Title Case</option>
+              <option>Remove Extra Spaces</option>
+              <option>Remove Empty Lines</option>
+              <option>Word Wrap</option>
+              <option>Reverse Lines</option>
+              <option>Sort Lines A-Z</option>
+              <option>Numbered Lines</option>
+              <option>Count Words</option>
+            </select>
+          </div>
+
+          <!-- Find & Replace -->
+          <div id="opt-find" class="">
+            <div class="field">
+              <label>Find</label>
+              <input type="text" id="e-find" placeholder="Text to find"/>
+            </div>
+            <div class="field">
+              <label>Replace with</label>
+              <input type="text" id="e-repl" placeholder="Replacement text"/>
+            </div>
+          </div>
+
+          <!-- Prefix/Suffix -->
+          <div id="opt-pre" style="display:none;">
+            <div class="field">
+              <label>Prefix</label>
+              <input type="text" id="e-pre" placeholder=">> "/>
+            </div>
+            <div class="field">
+              <label>Suffix</label>
+              <input type="text" id="e-suf" placeholder=" <<"/>
+            </div>
+          </div>
+
+          <!-- Word Wrap -->
+          <div id="opt-wrap" style="display:none;">
+            <div class="field">
+              <label>Wrap Width</label>
+              <input type="number" id="e-wrap" value="80" min="20" max="200"/>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="e-btn" onclick="doEdit()" style="width:100%;margin-top:12px;">
+          ⚡ Apply
+        </button>
+        <div id="e-status" class="status"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="sec-title">Result</div>
+      <textarea id="e-out" rows="10" readonly style="background:var(--surface2);"></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="copyResult()">📋 Copy</button>
+        <button class="btn btn-secondary" onclick="sendToInput()">↩ Use as Input</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ API DOCS ════════ -->
+  <div id="tab-apidocs" class="tab-pane">
+    <div class="card">
+      <h3>📡 API Reference</h3>
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;">
+        This tool connects directly to the Hugging Face Space via the Gradio JS Client.
+        You can also call it from your own website.
+      </p>
+      <div class="field">
+        <label>Space URL</label>
+        <div class="endpoint">https://Rafidmondal-allfile-tool.hf.space</div>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>Space ID</label>
+        <code style="color:var(--accent);">Rafidmondal/allfile-tool</code>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>API Key</label>
+        <code style="color:var(--accent3);">raxzen_file_create_key</code>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Generate File — <span class="api-method">POST</span><code>/api_generate</code></h3>
+      <pre><code>import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+const client = await Client.connect("Rafidmondal/allfile-tool");
+
+const result = await client.predict("/api_generate", {
+  api_key:       "raxzen_file_create_key",
+  text:          "Hello World!",
+  title:         "My Document",
+  file_type:     "PDF",          // PDF | HTML | TXT | DOCX | CSV | JSON | Markdown
+  font_size:     12,
+  page_size:     "A4",           // A4 | Letter
+  bg_color:      "#ffffff",
+  text_color:    "#000000",
+  add_border:    false,
+  html_theme:    "Light",        // Light | Dark | Ocean | Sunset
+  font_family:   "Default",      // Default | Serif | Mono | Modern
+  custom_css:    "",
+  add_line_numbers: false,
+  line_separator:  "None",       // None | Dashes | Equals | Stars
+  docx_font:       "Arial",
+  bold_title:      true,
+  docx_alignment:  "Left",       // Left | Center | Right | Justify
+  csv_delimiter:   "Comma"       // Comma | Tab | Semicolon | Pipe
+});
+
+// result.data = [file_object, status_string]
+const fileUrl = result.data[0].url;
+window.open(fileUrl, "_blank");</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>Read File — <span class="api-method" style="background:var(--accent2);">POST</span><code>/api_read</code></h3>
+      <pre><code>const result = await client.predict("/api_read", {
+  api_key: "raxzen_file_create_key",
+  file:    fileBlob   // File / Blob object
+});
+
+// result.data = [content_text, info_string]
+const text = result.data[0];
+const info = result.data[1]; // e.g. "📄 PDF | 3421 chars"</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>Edit Text — <span class="api-method" style="background:var(--accent3);">POST</span><code>/api_edit</code></h3>
+      <pre><code>const result = await client.predict("/api_edit", {
+  api_key:      "raxzen_file_create_key",
+  text:         "your text here",
+  action:       "UPPERCASE",
+  // Optional: find_text, replace_text, prefix, suffix, wrap_width
+});
+
+const editedText = result.data[0];</code></pre>
+    </div>
+
+    <div class="card">
+      <h4>Python Example</h4>
+      <pre><code>from gradio_client import Client
+
+client = Client("Rafidmondal/allfile-tool")
+
+file_path, status = client.predict(
+    api_key="raxzen_file_create_key",
+    text="Hello World",
+    title="My Doc",
+    file_type="PDF",
+    font_size=12,
+    page_size="A4",
+    bg_color="#ffffff",
+    text_color="#000000",
+    add_border=False,
+    html_theme="Light",
+    font_family="Default",
+    custom_css="",
+    add_line_numbers=False,
+    line_separator="None",
+    docx_font="Arial",
+    bold_title=True,
+    docx_alignment="Left",
+    csv_delimiter="Comma",
+    api_name="/api_generate"
+)
+print(status)    # ✅ PDF generated!
+print(file_path)</code></pre>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- Gradio Client -->
+<script type="module">
+import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@0.20.1/dist/index.min.js";
+
+const SPACE = "Rafidmondal/allfile-tool";
+let hfClient = null;
+
+async function getClient() {
+  if (!hfClient) {
+    hfClient = await Client.connect(SPACE);
+  }
+  return hfClient;
+}
+
+// ─── HELPERS ───
+function showStatus(id, type, msg) {
+  const el = document.getElementById(id);
+  el.className = `status ${type}`;
+  el.style.display = type === 'loading' ? 'flex' : 'block';
+  el.innerHTML = type === 'loading'
+    ? `<div class="spin"></div>${msg}`
+    : msg;
+}
+function hideStatus(id) {
+  const el = document.getElementById(id);
+  el.style.display = 'none';
+}
+function setBtn(id, disabled, text) {
+  const b = document.getElementById(id);
+  b.disabled = disabled;
+  if (text) b.innerHTML = text;
+}
+
+// ─── GENERATE ───
+window.doGenerate = async function() {
+  const key  = document.getElementById('g-key').value.trim();
+  const text = document.getElementById('g-text').value;
+  const title = document.getElementById('g-title').value;
+  const ft   = document.getElementById('g-type').value;
+
+  if (!text.trim()) { showStatus('g-status','error','❌ Content cannot be empty'); return; }
+
+  setBtn('g-btn', true, '⏳ Generating…');
+  showStatus('g-status','loading','Connecting to server…');
+  document.getElementById('g-download').classList.remove('show');
+
+  try {
+    const client = await getClient();
+    showStatus('g-status','loading',`Generating ${ft} file…`);
+
+    const params = {
+      api_key:     key,
+      text:        text,
+      title:       title,
+      file_type:   ft,
+      font_size:   parseInt(document.getElementById('g-fs').value),
+      page_size:   document.getElementById('g-ps').value,
+      bg_color:    document.getElementById('g-bg-hex').value,
+      text_color:  document.getElementById('g-tc-hex').value,
+      add_border:  document.getElementById('g-brd').checked,
+      html_theme:  document.getElementById('g-theme').value,
+      font_family: document.getElementById('g-font').value,
+      custom_css:  document.getElementById('g-css').value,
+      add_line_numbers: document.getElementById('g-ln').checked,
+      line_separator:   document.getElementById('g-sep').value,
+      docx_font:        document.getElementById('g-df').value,
+      bold_title:       document.getElementById('g-db').checked,
+      docx_alignment:   document.getElementById('g-da').value,
+      csv_delimiter:    document.getElementById('g-cd').value,
+    };
+
+    const result = await client.predict("/api_generate", params);
+    const [fileObj, statusMsg] = result.data;
+
+    if (!fileObj) {
+      showStatus('g-status','error', statusMsg || '❌ Generation failed');
+    } else {
+      showStatus('g-status','success', statusMsg || `✅ ${ft} generated!`);
+      const url = fileObj.url || fileObj;
+      const dl = document.getElementById('g-dl-link');
+      dl.href = url;
+      dl.download = `output.${ft.toLowerCase()}`;
+      dl.textContent = `⬇️ Download ${ft} File`;
+      document.getElementById('g-download').classList.add('show');
+    }
+  } catch(e) {
+    showStatus('g-status','error','❌ Error: ' + e.message);
+  } finally {
+    setBtn('g-btn', false, '🚀 Generate File');
+  }
+};
+
+// ─── READ ───
+window.doRead = async function() {
+  const key   = document.getElementById('r-key').value.trim();
+  const input = document.getElementById('r-file-input');
+  if (!input.files.length) { showStatus('r-status','error','❌ No file selected'); return; }
+  const rawFile = input.files[0];
+
+  const ext = rawFile.name.split('.').pop().toLowerCase();
+  const supported = ['pdf','docx','html','htm','txt','md','csv','json'];
+  if (!supported.includes(ext)) {
+    showStatus('r-status','error','❌ Unsupported: .' + ext + ' — Supported: PDF, DOCX, HTML, TXT, CSV, JSON');
+    return;
+  }
+
+  setBtn('r-btn', true, '⏳ Connecting…');
+  showStatus('r-status','loading','Connecting to server…');
+
+  try {
+    const client = await getClient();
+
+    showStatus('r-status','loading','Uploading ' + ext.toUpperCase() + ' file…');
+
+    // Gradio 0.20.x: pass File directly to predict — client handles upload internally
+    const result = await client.predict('/api_read', [key, rawFile]);
+    const [textContent, info] = result.data;
+
+    if (!textContent || textContent.toString().startsWith('❌')) {
+      showStatus('r-status','error', textContent || '❌ Server failed to read file');
+    } else {
+      hideStatus('r-status');
+      document.getElementById('r-out').textContent = textContent;
+      document.getElementById('r-info').textContent = info || '';
+      document.getElementById('r-result-card').style.display = 'block';
+      showStatus('r-status','success', '✅ ' + (info || 'Done!'));
+      setTimeout(() => hideStatus('r-status'), 3000);
+    }
+  } catch(e) {
+    showStatus('r-status','error','❌ ' + e.message);
+  } finally {
+    setBtn('r-btn', false, '📖 Read File');
+  }
+};OCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>⚡ AllFile Tool Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #0b0d12;
+    --surface:  #111520;
+    --surface2: #161b2a;
+    --border:   #1e2535;
+    --accent:   #4fffb0;
+    --accent2:  #4f9fff;
+    --accent3:  #ff4f9f;
+    --text:     #dce4f0;
+    --muted:    #5a6480;
+    --success:  #4fffb0;
+    --error:    #ff4f6f;
+    --warn:     #ffcc4f;
+    --radius:   10px;
+    --mono:     'Space Mono', monospace;
+    --display:  'Syne', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(79,255,176,.08) 0%, transparent 70%),
+      repeating-linear-gradient(0deg,transparent,transparent 39px,var(--border) 40px),
+      repeating-linear-gradient(90deg,transparent,transparent 39px,var(--border) 40px);
+  }
+
+  /* HEADER */
+  header{
+    text-align:center;
+    padding:40px 20px 28px;
+    position:relative;
+  }
+  header h1{
+    font-family:var(--display);
+    font-size:clamp(28px,5vw,48px);
+    font-weight:800;
+    letter-spacing:-1px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  header p{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:8px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+  }
+  .badge{
+    display:inline-flex;gap:6px;margin-top:14px;flex-wrap:wrap;justify-content:center;
+  }
+  .badge span{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    color:var(--accent);
+    font-size:10px;
+    padding:3px 10px;
+    border-radius:99px;
+    letter-spacing:1px;
+  }
+
+  /* CONTAINER */
+  .container{max-width:1100px;margin:0 auto;padding:0 16px 60px;}
+
+  /* TABS */
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px;overflow-x:auto;}
+  .tab-btn{
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:700;
+    color:var(--muted);
+    background:transparent;
+    border:none;
+    padding:12px 18px;
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    margin-bottom:-2px;
+    transition:all .2s;
+    white-space:nowrap;
+    letter-spacing:.5px;
+  }
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab-pane{display:none;}
+  .tab-pane.active{display:block;}
+
+  /* CARD */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:16px;
+  }
+
+  /* GRID */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  /* FORM ELEMENTS */
+  label{
+    display:block;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  input[type=text],input[type=password],input[type=number],
+  textarea,select{
+    width:100%;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    padding:10px 14px;
+    outline:none;
+    transition:border .2s;
+    appearance:none;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+  select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6480' fill='none' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+  textarea{resize:vertical;min-height:120px;line-height:1.6;}
+
+  /* RANGE */
+  .range-wrap{display:flex;align-items:center;gap:10px;}
+  input[type=range]{flex:1;accent-color:var(--accent);}
+  .range-val{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:3px 10px;
+    font-size:12px;
+    min-width:36px;
+    text-align:center;
+    color:var(--accent);
+  }
+
+  /* CHECKBOX */
+  .check-row{display:flex;align-items:center;gap:10px;padding:8px 0;}
+  input[type=checkbox]{
+    width:16px;height:16px;
+    accent-color:var(--accent);
+    cursor:pointer;
+  }
+  .check-row label{margin:0;text-transform:none;font-size:13px;color:var(--text);cursor:pointer;}
+
+  /* COLOR PICKER */
+  .color-wrap{display:flex;align-items:center;gap:10px;}
+  input[type=color]{
+    width:44px;height:36px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:none;
+    cursor:pointer;
+    padding:2px;
+  }
+  .color-hex{
+    flex:1;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    padding:8px 12px;
+    outline:none;
+  }
+  .color-hex:focus{border-color:var(--accent);}
+
+  /* RADIO GROUP */
+  .radio-group{display:flex;gap:8px;flex-wrap:wrap;}
+  .radio-opt{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:7px 16px;
+    font-size:12px;
+    cursor:pointer;
+    transition:all .15s;
+    user-select:none;
+  }
+  .radio-opt.selected{background:rgba(79,255,176,.12);border-color:var(--accent);color:var(--accent);}
+
+  /* SECTION TITLE */
+  .sec-title{
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* FIELD GROUP */
+  .field{margin-bottom:14px;}
+
+  /* BUTTONS */
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:700;
+    border:none;
+    border-radius:var(--radius);
+    padding:12px 28px;
+    cursor:pointer;
+    transition:all .18s;
+    letter-spacing:.5px;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:#0b0d12;
+  }
+  .btn-primary:hover{background:#3de89a;transform:translateY(-1px);box-shadow:0 4px 20px rgba(79,255,176,.25);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  .btn-secondary{
+    background:var(--surface2);
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-secondary:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  /* STATUS */
+  .status{
+    padding:12px 16px;
+    border-radius:var(--radius);
+    font-size:13px;
+    margin-top:12px;
+    border:1px solid transparent;
+    display:none;
+  }
+  .status.success{background:rgba(79,255,176,.08);border-color:rgba(79,255,176,.25);color:var(--success);}
+  .status.error{background:rgba(255,79,111,.08);border-color:rgba(255,79,111,.25);color:var(--error);}
+  .status.loading{background:rgba(79,159,255,.08);border-color:rgba(79,159,255,.25);color:var(--accent2);display:flex;align-items:center;gap:10px;}
+
+  /* SPINNER */
+  .spin{
+    width:16px;height:16px;
+    border:2px solid rgba(79,159,255,.3);
+    border-top-color:var(--accent2);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    flex-shrink:0;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* DOWNLOAD BTN */
+  .download-area{
+    margin-top:14px;
+    padding:20px;
+    border:2px dashed var(--border);
+    border-radius:var(--radius);
+    text-align:center;
+    display:none;
+  }
+  .download-area.show{display:block;}
+  .download-area a{
+    color:var(--accent);
+    font-size:14px;
+    font-weight:700;
+    text-decoration:none;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .download-area a:hover{color:#3de89a;}
+
+  /* FILE UPLOAD */
+  .file-drop{
+    border:2px dashed var(--border);
+    border-radius:var(--radius);
+    padding:32px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .2s;
+    position:relative;
+  }
+  .file-drop:hover{border-color:var(--accent2);background:rgba(79,159,255,.04);}
+  .file-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .file-drop-icon{font-size:28px;margin-bottom:8px;}
+  .file-drop-text{color:var(--muted);font-size:12px;}
+  .file-drop-name{color:var(--accent2);margin-top:6px;font-size:12px;}
+
+  /* READ OUTPUT */
+  #r-out{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    min-height:200px;
+    white-space:pre-wrap;
+    line-height:1.7;
+    font-size:13px;
+    color:var(--text);
+    overflow:auto;
+    max-height:400px;
+  }
+
+  /* CODE BLOCK */
+  pre{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    overflow-x:auto;
+    font-size:12px;
+    line-height:1.6;
+  }
+  code{color:var(--accent2);}
+
+  /* MAIN LAYOUT */
+  .gen-layout{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;}
+  @media(max-width:800px){.gen-layout{grid-template-columns:1fr;}}
+
+  /* TAG PILL */
+  .tag{
+    display:inline-block;
+    background:rgba(79,255,176,.1);
+    color:var(--accent);
+    border:1px solid rgba(79,255,176,.2);
+    border-radius:6px;
+    font-size:10px;
+    padding:2px 8px;
+    letter-spacing:1px;
+  }
+
+  /* API DOCS */
+  .api-method{
+    display:inline-block;
+    background:var(--accent);
+    color:#0b0d12;
+    font-size:10px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:4px;
+    letter-spacing:1px;
+    margin-right:8px;
+  }
+  .endpoint{
+    color:var(--accent2);
+    font-size:14px;
+    font-weight:700;
+    word-break:break-all;
+  }
+  h3{font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text);}
+  h4{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{width:6px;height:6px;}
+  ::-webkit-scrollbar-track{background:var(--surface);}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ AllFile Tool Pro</h1>
+  <p>Powered by Rafidmondal / allfile-tool</p>
+  <div class="badge">
+    <span>PDF</span><span>HTML</span><span>TXT</span>
+    <span>DOCX</span><span>CSV</span><span>JSON</span><span>MARKDOWN</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('generate')">📄 Generate</button>
+    <button class="tab-btn" onclick="switchTab('read')">📖 Read</button>
+    <button class="tab-btn" onclick="switchTab('edit')">✏️ Edit</button>
+    <button class="tab-btn" onclick="switchTab('apidocs')">📡 API Docs</button>
+  </div>
+
+  <!-- ════════ GENERATE ════════ -->
+  <div id="tab-generate" class="tab-pane active">
+    <div class="gen-layout">
+
+      <!-- LEFT: Main inputs -->
+      <div>
+        <div class="card">
+          <div class="sec-title">Authentication</div>
+          <div class="field">
+            <label>🔑 API Key</label>
+            <input type="password" id="g-key" value="raxzen_file_create_key" placeholder="Enter API Key"/>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">Document Content</div>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="g-title" placeholder="My Document"/>
+          </div>
+          <div class="field">
+            <label>Content</label>
+            <textarea id="g-text" rows="12" placeholder="Type your content here..."></textarea>
+          </div>
+          <div class="field">
+            <label>File Type</label>
+            <select id="g-type" onchange="onTypeChange()">
+              <option>PDF</option>
+              <option>HTML</option>
+              <option>TXT</option>
+              <option>DOCX</option>
+              <option>CSV</option>
+              <option>JSON</option>
+              <option>Markdown</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Options -->
+      <div>
+        <!-- PDF Options -->
+        <div class="card" id="opt-pdf">
+          <div class="sec-title">PDF Options</div>
+          <div class="field">
+            <label>Font Size — <span id="fs-val">12</span>px</label>
+            <div class="range-wrap">
+              <input type="range" id="g-fs" min="8" max="32" value="12"
+                     oninput="document.getElementById('fs-val').textContent=this.value"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Page Size</label>
+            <div class="radio-group">
+              <div class="radio-opt selected" onclick="selectRadio(this,'g-ps')">A4</div>
+              <div class="radio-opt" onclick="selectRadio(this,'g-ps')">Letter</div>
+            </div>
+            <input type="hidden" id="g-ps" value="A4"/>
+          </div>
+          <div class="field">
+            <label>Background Color</label>
+            <div class="color-wrap">
+              <input type="color" id="g-bg-pick" value="#ffffff" oninput="syncColor('g-bg-pick','g-bg-hex')"/>
+              <input type="text" class="color-hex" id="g-bg-hex" value="#ffffff" oninput="syncHex('g-bg-hex','g-bg-pick')" maxlength="7"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Text Color</label>
+            <div class="color-wrap">
+              <input type="color" id="g-tc-pick" value="#000000" oninput="syncColor('g-tc-pick','g-tc-hex')"/>
+              <input type="text" class="color-hex" id="g-tc-hex" value="#000000" oninput="syncHex('g-tc-hex','g-tc-pick')" maxlength="7"/>
+            </div>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="g-brd"/>
+            <label for="g-brd">Add Border</label>
+          </div>
+        </div>
+
+        <!-- HTML Options -->
+        <div class="card" id="opt-html" style="display:none;">
+          <div class="sec-title">HTML Options</div>
+          <div class="field">
+            <label>Theme</label>
+            <select id="g-theme"><option>Light</option><option>Dark</option><option>Ocean</option><option>Sunset</option></select>
+          </div>
+          <div class="field">
+            <label>Font Family</label>
+            <select id="g-font"><option>Default</option><option>Serif</option><option>Mono</option><option>Modern</option></select>
+          </div>
+          <div class="field">
+            <label>Custom CSS</label>
+            <textarea id="g-css" rows="3" placeholder="h1 { color: red; }"></textarea>
+          </div>
+        </div>
+
+        <!-- TXT Options -->
+        <div class="card" id="opt-txt" style="display:none;">
+          <div class="sec-title">TXT Options</div>
+          <div class="check-row">
+            <input type="checkbox" id="g-ln"/>
+            <label for="g-ln">Add Line Numbers</label>
+          </div>
+          <div class="field" style="margin-top:12px;">
+            <label>Line Separator</label>
+            <select id="g-sep"><option>None</option><option>Dashes</option><option>Equals</option><option>Stars</option></select>
+          </div>
+        </div>
+
+        <!-- DOCX Options -->
+        <div class="card" id="opt-docx" style="display:none;">
+          <div class="sec-title">DOCX Options</div>
+          <div class="field">
+            <label>Font</label>
+            <select id="g-df"><option>Arial</option><option>Times New Roman</option><option>Calibri</option></select>
+          </div>
+          <div class="field">
+            <label>Alignment</label>
+            <select id="g-da"><option>Left</option><option>Center</option><option>Right</option><option>Justify</option></select>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="g-db" checked/>
+            <label for="g-db">Bold Title</label>
+          </div>
+        </div>
+
+        <!-- CSV Options -->
+        <div class="card" id="opt-csv" style="display:none;">
+          <div class="sec-title">CSV Options</div>
+          <div class="field">
+            <label>Delimiter</label>
+            <select id="g-cd"><option>Comma</option><option>Tab</option><option>Semicolon</option><option>Pipe</option></select>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button class="btn btn-primary" id="g-btn" onclick="doGenerate()" style="width:100%;">
+          🚀 Generate File
+        </button>
+
+        <div id="g-status" class="status"></div>
+        <div id="g-download" class="download-area">
+          <div style="color:var(--muted);font-size:11px;margin-bottom:10px;letter-spacing:1px;">FILE READY</div>
+          <a id="g-dl-link" href="#" target="_blank">⬇️ Download File</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ READ ════════ -->
+  <div id="tab-read" class="tab-pane">
+    <div class="card">
+      <div class="sec-title">Authentication</div>
+      <div class="field">
+        <label>🔑 API Key</label>
+        <input type="password" id="r-key" value="raxzen_file_create_key"/>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-title">Upload File</div>
+      <div class="file-drop" onclick="document.getElementById('r-file-input').click()">
+        <input type="file" id="r-file-input" accept=".pdf,.docx,.html,.csv,.json"
+               onchange="onFileSelect()" style="display:none"/>
+        <div class="file-drop-icon">📂</div>
+        <div class="file-drop-text">Click to upload — PDF, DOCX, HTML, CSV, JSON</div>
+        <div class="file-drop-name" id="r-file-name"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <button class="btn btn-primary" id="r-btn" onclick="doRead()">📖 Read File</button>
+    </div>
+    <div id="r-status" class="status"></div>
+    <div class="card" style="margin-top:12px;" id="r-result-card" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div class="sec-title" style="margin-bottom:0;">Extracted Content</div>
+        <span id="r-info" class="tag"></span>
+      </div>
+      <div id="r-out">Extracted content will appear here…</div>
+    </div>
+  </div>
+
+  <!-- ════════ EDIT ════════ -->
+  <div id="tab-edit" class="tab-pane">
+    <div class="card">
+      <div class="sec-title">Authentication</div>
+      <div class="field">
+        <label>🔑 API Key</label>
+        <input type="password" id="e-key" value="raxzen_file_create_key"/>
+      </div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="card" style="height:100%;">
+          <div class="sec-title">Input Text</div>
+          <textarea id="e-in" rows="14" placeholder="Paste your text here…"></textarea>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="sec-title">Action</div>
+          <div class="field">
+            <select id="e-act" onchange="onActionChange()">
+              <option>Find &amp; Replace</option>
+              <option>Add Prefix/Suffix</option>
+              <option>UPPERCASE</option>
+              <option>lowercase</option>
+              <option>Title Case</option>
+              <option>Remove Extra Spaces</option>
+              <option>Remove Empty Lines</option>
+              <option>Word Wrap</option>
+              <option>Reverse Lines</option>
+              <option>Sort Lines A-Z</option>
+              <option>Numbered Lines</option>
+              <option>Count Words</option>
+            </select>
+          </div>
+
+          <!-- Find & Replace -->
+          <div id="opt-find" class="">
+            <div class="field">
+              <label>Find</label>
+              <input type="text" id="e-find" placeholder="Text to find"/>
+            </div>
+            <div class="field">
+              <label>Replace with</label>
+              <input type="text" id="e-repl" placeholder="Replacement text"/>
+            </div>
+          </div>
+
+          <!-- Prefix/Suffix -->
+          <div id="opt-pre" style="display:none;">
+            <div class="field">
+              <label>Prefix</label>
+              <input type="text" id="e-pre" placeholder=">> "/>
+            </div>
+            <div class="field">
+              <label>Suffix</label>
+              <input type="text" id="e-suf" placeholder=" <<"/>
+            </div>
+          </div>
+
+          <!-- Word Wrap -->
+          <div id="opt-wrap" style="display:none;">
+            <div class="field">
+              <label>Wrap Width</label>
+              <input type="number" id="e-wrap" value="80" min="20" max="200"/>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="e-btn" onclick="doEdit()" style="width:100%;margin-top:12px;">
+          ⚡ Apply
+        </button>
+        <div id="e-status" class="status"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="sec-title">Result</div>
+      <textarea id="e-out" rows="10" readonly style="background:var(--surface2);"></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="copyResult()">📋 Copy</button>
+        <button class="btn btn-secondary" onclick="sendToInput()">↩ Use as Input</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ API DOCS ════════ -->
+  <div id="tab-apidocs" class="tab-pane">
+    <div class="card">
+      <h3>📡 API Reference</h3>
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;">
+        This tool connects directly to the Hugging Face Space via the Gradio JS Client.
+        You can also call it from your own website.
+      </p>
+      <div class="field">
+        <label>Space URL</label>
+        <div class="endpoint">https://Rafidmondal-allfile-tool.hf.space</div>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>Space ID</label>
+        <code style="color:var(--accent);">Rafidmondal/allfile-tool</code>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>API Key</label>
+        <code style="color:var(--accent3);">raxzen_file_create_key</code>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Generate File — <span class="api-method">POST</span><code>/api_generate</code></h3>
+      <pre><code>import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+const client = await Client.connect("Rafidmondal/allfile-tool");
+
+const result = await client.predict("/api_generate", {
+  api_key:       "raxzen_file_create_key",
+  text:          "Hello World!",
+  title:         "My Document",
+  file_type:     "PDF",          // PDF | HTML | TXT | DOCX | CSV | JSON | Markdown
+  font_size:     12,
+  page_size:     "A4",           // A4 | Letter
+  bg_color:      "#ffffff",
+  text_color:    "#000000",
+  add_border:    false,
+  html_theme:    "Light",        // Light | Dark | Ocean | Sunset
+  font_family:   "Default",      // Default | Serif | Mono | Modern
+  custom_css:    "",
+  add_line_numbers: false,
+  line_separator:  "None",       // None | Dashes | Equals | Stars
+  docx_font:       "Arial",
+  bold_title:      true,
+  docx_alignment:  "Left",       // Left | Center | Right | Justify
+  csv_delimiter:   "Comma"       // Comma | Tab | Semicolon | Pipe
+});
+
+// result.data = [file_object, status_string]
+const fileUrl = result.data[0].url;
+window.open(fileUrl, "_blank");</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>Read File — <span class="api-method" style="background:var(--accent2);">POST</span><code>/api_read</code></h3>
+      <pre><code>const result = await client.predict("/api_read", {
+  api_key: "raxzen_file_create_key",
+  file:    fileBlob   // File / Blob object
+});
+
+// result.data = [content_text, info_string]
+const text = result.data[0];
+const info = result.data[1]; // e.g. "📄 PDF | 3421 chars"</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>Edit Text — <span class="api-method" style="background:var(--accent3);">POST</span><code>/api_edit</code></h3>
+      <pre><code>const result = await client.predict("/api_edit", {
+  api_key:      "raxzen_file_create_key",
+  text:         "your text here",
+  action:       "UPPERCASE",
+  // Optional: find_text, replace_text, prefix, suffix, wrap_width
+});
+
+const editedText = result.data[0];</code></pre>
+    </div>
+
+    <div class="card">
+      <h4>Python Example</h4>
+      <pre><code>from gradio_client import Client
+
+client = Client("Rafidmondal/allfile-tool")
+
+file_path, status = client.predict(
+    api_key="raxzen_file_create_key",
+    text="Hello World",
+    title="My Doc",
+    file_type="PDF",
+    font_size=12,
+    page_size="A4",
+    bg_color="#ffffff",
+    text_color="#000000",
+    add_border=False,
+    html_theme="Light",
+    font_family="Default",
+    custom_css="",
+    add_line_numbers=False,
+    line_separator="None",
+    docx_font="Arial",
+    bold_title=True,
+    docx_alignment="Left",
+    csv_delimiter="Comma",
+    api_name="/api_generate"
+)
+print(status)    # ✅ PDF generated!
+print(file_path)</code></pre>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- Gradio Client -->
+<script type="module">
+import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@0.20.1/dist/index.min.js";
+
+const SPACE = "Rafidmondal/allfile-tool";
+let hfClient = null;
+
+async function getClient() {
+  if (!hfClient) {
+    hfClient = await Client.connect(SPACE);
+  }
+  return hfClient;
+}
+
+// ─── HELPERS ───
+function showStatus(id, type, msg) {
+  const el = document.getElementById(id);
+  el.className = `status ${type}`;
+  el.style.display = type === 'loading' ? 'flex' : 'block';
+  el.innerHTML = type === 'loading'
+    ? `<div class="spin"></div>${msg}`
+    : msg;
+}
+function hideStatus(id) {
+  const el = document.getElementById(id);
+  el.style.display = 'none';
+}
+function setBtn(id, disabled, text) {
+  const b = document.getElementById(id);
+  b.disabled = disabled;
+  if (text) b.innerHTML = text;
+}
+
+// ─── GENERATE ───
+window.doGenerate = async function() {
+  const key  = document.getElementById('g-key').value.trim();
+  const text = document.getElementById('g-text').value;
+  const title = document.getElementById('g-title').value;
+  const ft   = document.getElementById('g-type').value;
+
+  if (!text.trim()) { showStatus('g-status','error','❌ Content cannot be empty'); return; }
+
+  setBtn('g-btn', true, '⏳ Generating…');
+  showStatus('g-status','loading','Connecting to server…');
+  document.getElementById('g-download').classList.remove('show');
+
+  try {
+    const client = await getClient();
+    showStatus('g-status','loading',`Generating ${ft} file…`);
+
+    const params = {
+      api_key:     key,
+      text:        text,
+      title:       title,
+      file_type:   ft,
+      font_size:   parseInt(document.getElementById('g-fs').value),
+      page_size:   document.getElementById('g-ps').value,
+      bg_color:    document.getElementById('g-bg-hex').value,
+      text_color:  document.getElementById('g-tc-hex').value,
+      add_border:  document.getElementById('g-brd').checked,
+      html_theme:  document.getElementById('g-theme').value,
+      font_family: document.getElementById('g-font').value,
+      custom_css:  document.getElementById('g-css').value,
+      add_line_numbers: document.getElementById('g-ln').checked,
+      line_separator:   document.getElementById('g-sep').value,
+      docx_font:        document.getElementById('g-df').value,
+      bold_title:       document.getElementById('g-db').checked,
+      docx_alignment:   document.getElementById('g-da').value,
+      csv_delimiter:    document.getElementById('g-cd').value,
+    };
+
+    const result = await client.predict("/api_generate", params);
+    const [fileObj, statusMsg] = result.data;
+
+    if (!fileObj) {
+      showStatus('g-status','error', statusMsg || '❌ Generation failed');
+    } else {
+      showStatus('g-status','success', statusMsg || `✅ ${ft} generated!`);
+      const url = fileObj.url || fileObj;
+      const dl = document.getElementById('g-dl-link');
+      dl.href = url;
+      dl.download = `output.${ft.toLowerCase()}`;
+      dl.textContent = `⬇️ Download ${ft} File`;
+      document.getElementById('g-download').classList.add('show');
+    }
+  } catch(e) {
+    showStatus('g-status','error','❌ Error: ' + e.message);
+  } finally {
+    setBtn('g-btn', false, '🚀 Generate File');
+  }
+};
+
+// ─── READ ───
+window.doRead = async function() {
+  const key   = document.getElementById('r-key').value.trim();
+  const input = document.getElementById('r-file-input');
+  if (!input.files.length) { showStatus('r-status','error','❌ No file selected'); return; }
+  const rawFile = input.files[0];
+
+  const ext = rawFile.name.split('.').pop().toLowerCase();
+  const supported = ['pdf','docx','html','htm','txt','md','csv','json'];
+  if (!supported.includes(ext)) {
+    showStatus('r-status','error',`❌ Unsupported: .${ext} — Supported: PDF, DOCX, HTML, TXT, CSV, JSON`);
+    return;
+  }
+
+  setBtn('r-btn', true, '⏳ Connecting…');
+  showStatus('r-status','loading','Connecting to server…');
+
+  try {
+    // Step 1: Connect first — this wakes the space
+    const client = await getClient();
+
+    // Step 2: Get real root URL from client config
+    const root = (client.config && client.config.root)
+      ? client.config.root.replace(/\/$/, '')
+      : 'https://rafidmondal-allfile-tool.hf.space';
+
+    showStatus('r-status','loading',`Uploading ${ext.toUpperCase()} to ${root}…`);
+
+    // Step 3: Upload file using the confirmed root URL
+    const fd = new FormData();
+    // Make sure filename keeps extension
+    const safeFile = new File([rawFile], 'document.' + ext, { type: rawFile.type });
+    fd.append('files', safeFile);
+
+    const upResp = await fetch(`${root}/upload`, { method: 'POST', body: fd });
+
+    if (!upResp.ok) {
+      const errText = await upResp.text().catch(() => '');
+      throw new Error(`Upload HTTP ${upResp.status}: ${errText.slice(0,200)}`);
+    }
+
+    const upData  = await upResp.json();
+    const tmpPath = Array.isArray(upData) ? upData[0] : upData;
+
+    showStatus('r-status','loading',`Reading ${ext.toUpperCase()} content…`);
+
+    // Step 4: Predict with server path
+    const fileObj = typeof tmpPath === 'string'
+      ? { path: tmpPath, orig_name: 'document.' + ext, size: rawFile.size, mime_type: rawFile.type || '' }
+      : tmpPath;  // Gradio 5 returns object directly
+
+    const result = await client.predict('/api_read', [key, fileObj]);
+    const [textContent, info] = result.data;
+
+    if (!textContent || textContent.startsWith('❌')) {
+      showStatus('r-status','error', textContent || '❌ Server failed to read file');
+    } else {
+      hideStatus('r-status');
+      document.getElementById('r-out').textContent = textContent;
+      document.getElementById('r-info').textContent = info || '';
+      document.getElementById('r-result-card').style.display = 'block';
+      showStatus('r-status','success', `✅ ${info || 'Done!'}`);
+      setTimeout(() => hideStatus('r-status'), 3000);
+    }
+  } catch(e) {
+    showStatus('r-status','error','❌ ' + e.message);
+  } finally {
+    setBtn('r-btn', false, '📖 Read File');
+  }
+};OCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>⚡ AllFile Tool Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #0b0d12;
+    --surface:  #111520;
+    --surface2: #161b2a;
+    --border:   #1e2535;
+    --accent:   #4fffb0;
+    --accent2:  #4f9fff;
+    --accent3:  #ff4f9f;
+    --text:     #dce4f0;
+    --muted:    #5a6480;
+    --success:  #4fffb0;
+    --error:    #ff4f6f;
+    --warn:     #ffcc4f;
+    --radius:   10px;
+    --mono:     'Space Mono', monospace;
+    --display:  'Syne', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(79,255,176,.08) 0%, transparent 70%),
+      repeating-linear-gradient(0deg,transparent,transparent 39px,var(--border) 40px),
+      repeating-linear-gradient(90deg,transparent,transparent 39px,var(--border) 40px);
+  }
+
+  /* HEADER */
+  header{
+    text-align:center;
+    padding:40px 20px 28px;
+    position:relative;
+  }
+  header h1{
+    font-family:var(--display);
+    font-size:clamp(28px,5vw,48px);
+    font-weight:800;
+    letter-spacing:-1px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  header p{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:8px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+  }
+  .badge{
+    display:inline-flex;gap:6px;margin-top:14px;flex-wrap:wrap;justify-content:center;
+  }
+  .badge span{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    color:var(--accent);
+    font-size:10px;
+    padding:3px 10px;
+    border-radius:99px;
+    letter-spacing:1px;
+  }
+
+  /* CONTAINER */
+  .container{max-width:1100px;margin:0 auto;padding:0 16px 60px;}
+
+  /* TABS */
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px;overflow-x:auto;}
+  .tab-btn{
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:700;
+    color:var(--muted);
+    background:transparent;
+    border:none;
+    padding:12px 18px;
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    margin-bottom:-2px;
+    transition:all .2s;
+    white-space:nowrap;
+    letter-spacing:.5px;
+  }
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab-pane{display:none;}
+  .tab-pane.active{display:block;}
+
+  /* CARD */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:16px;
+  }
+
+  /* GRID */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  /* FORM ELEMENTS */
+  label{
+    display:block;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  input[type=text],input[type=password],input[type=number],
+  textarea,select{
+    width:100%;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    padding:10px 14px;
+    outline:none;
+    transition:border .2s;
+    appearance:none;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+  select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6480' fill='none' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+  textarea{resize:vertical;min-height:120px;line-height:1.6;}
+
+  /* RANGE */
+  .range-wrap{display:flex;align-items:center;gap:10px;}
+  input[type=range]{flex:1;accent-color:var(--accent);}
+  .range-val{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:3px 10px;
+    font-size:12px;
+    min-width:36px;
+    text-align:center;
+    color:var(--accent);
+  }
+
+  /* CHECKBOX */
+  .check-row{display:flex;align-items:center;gap:10px;padding:8px 0;}
+  input[type=checkbox]{
+    width:16px;height:16px;
+    accent-color:var(--accent);
+    cursor:pointer;
+  }
+  .check-row label{margin:0;text-transform:none;font-size:13px;color:var(--text);cursor:pointer;}
+
+  /* COLOR PICKER */
+  .color-wrap{display:flex;align-items:center;gap:10px;}
+  input[type=color]{
+    width:44px;height:36px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:none;
+    cursor:pointer;
+    padding:2px;
+  }
+  .color-hex{
+    flex:1;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    padding:8px 12px;
+    outline:none;
+  }
+  .color-hex:focus{border-color:var(--accent);}
+
+  /* RADIO GROUP */
+  .radio-group{display:flex;gap:8px;flex-wrap:wrap;}
+  .radio-opt{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:7px 16px;
+    font-size:12px;
+    cursor:pointer;
+    transition:all .15s;
+    user-select:none;
+  }
+  .radio-opt.selected{background:rgba(79,255,176,.12);border-color:var(--accent);color:var(--accent);}
+
+  /* SECTION TITLE */
+  .sec-title{
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* FIELD GROUP */
+  .field{margin-bottom:14px;}
+
+  /* BUTTONS */
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:700;
+    border:none;
+    border-radius:var(--radius);
+    padding:12px 28px;
+    cursor:pointer;
+    transition:all .18s;
+    letter-spacing:.5px;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:#0b0d12;
+  }
+  .btn-primary:hover{background:#3de89a;transform:translateY(-1px);box-shadow:0 4px 20px rgba(79,255,176,.25);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  .btn-secondary{
+    background:var(--surface2);
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-secondary:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  /* STATUS */
+  .status{
+    padding:12px 16px;
+    border-radius:var(--radius);
+    font-size:13px;
+    margin-top:12px;
+    border:1px solid transparent;
+    display:none;
+  }
+  .status.success{background:rgba(79,255,176,.08);border-color:rgba(79,255,176,.25);color:var(--success);}
+  .status.error{background:rgba(255,79,111,.08);border-color:rgba(255,79,111,.25);color:var(--error);}
+  .status.loading{background:rgba(79,159,255,.08);border-color:rgba(79,159,255,.25);color:var(--accent2);display:flex;align-items:center;gap:10px;}
+
+  /* SPINNER */
+  .spin{
+    width:16px;height:16px;
+    border:2px solid rgba(79,159,255,.3);
+    border-top-color:var(--accent2);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    flex-shrink:0;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* DOWNLOAD BTN */
+  .download-area{
+    margin-top:14px;
+    padding:20px;
+    border:2px dashed var(--border);
+    border-radius:var(--radius);
+    text-align:center;
+    display:none;
+  }
+  .download-area.show{display:block;}
+  .download-area a{
+    color:var(--accent);
+    font-size:14px;
+    font-weight:700;
+    text-decoration:none;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .download-area a:hover{color:#3de89a;}
+
+  /* FILE UPLOAD */
+  .file-drop{
+    border:2px dashed var(--border);
+    border-radius:var(--radius);
+    padding:32px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .2s;
+    position:relative;
+  }
+  .file-drop:hover{border-color:var(--accent2);background:rgba(79,159,255,.04);}
+  .file-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .file-drop-icon{font-size:28px;margin-bottom:8px;}
+  .file-drop-text{color:var(--muted);font-size:12px;}
+  .file-drop-name{color:var(--accent2);margin-top:6px;font-size:12px;}
+
+  /* READ OUTPUT */
+  #r-out{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    min-height:200px;
+    white-space:pre-wrap;
+    line-height:1.7;
+    font-size:13px;
+    color:var(--text);
+    overflow:auto;
+    max-height:400px;
+  }
+
+  /* CODE BLOCK */
+  pre{
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    overflow-x:auto;
+    font-size:12px;
+    line-height:1.6;
+  }
+  code{color:var(--accent2);}
+
+  /* MAIN LAYOUT */
+  .gen-layout{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;}
+  @media(max-width:800px){.gen-layout{grid-template-columns:1fr;}}
+
+  /* TAG PILL */
+  .tag{
+    display:inline-block;
+    background:rgba(79,255,176,.1);
+    color:var(--accent);
+    border:1px solid rgba(79,255,176,.2);
+    border-radius:6px;
+    font-size:10px;
+    padding:2px 8px;
+    letter-spacing:1px;
+  }
+
+  /* API DOCS */
+  .api-method{
+    display:inline-block;
+    background:var(--accent);
+    color:#0b0d12;
+    font-size:10px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:4px;
+    letter-spacing:1px;
+    margin-right:8px;
+  }
+  .endpoint{
+    color:var(--accent2);
+    font-size:14px;
+    font-weight:700;
+    word-break:break-all;
+  }
+  h3{font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text);}
+  h4{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{width:6px;height:6px;}
+  ::-webkit-scrollbar-track{background:var(--surface);}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ AllFile Tool Pro</h1>
+  <p>Powered by Rafidmondal / allfile-tool</p>
+  <div class="badge">
+    <span>PDF</span><span>HTML</span><span>TXT</span>
+    <span>DOCX</span><span>CSV</span><span>JSON</span><span>MARKDOWN</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('generate')">📄 Generate</button>
+    <button class="tab-btn" onclick="switchTab('read')">📖 Read</button>
+    <button class="tab-btn" onclick="switchTab('edit')">✏️ Edit</button>
+    <button class="tab-btn" onclick="switchTab('apidocs')">📡 API Docs</button>
+  </div>
+
+  <!-- ════════ GENERATE ════════ -->
+  <div id="tab-generate" class="tab-pane active">
+    <div class="gen-layout">
+
+      <!-- LEFT: Main inputs -->
+      <div>
+        <div class="card">
+          <div class="sec-title">Authentication</div>
+          <div class="field">
+            <label>🔑 API Key</label>
+            <input type="password" id="g-key" value="raxzen_file_create_key" placeholder="Enter API Key"/>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">Document Content</div>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="g-title" placeholder="My Document"/>
+          </div>
+          <div class="field">
+            <label>Content</label>
+            <textarea id="g-text" rows="12" placeholder="Type your content here..."></textarea>
+          </div>
+          <div class="field">
+            <label>File Type</label>
+            <select id="g-type" onchange="onTypeChange()">
+              <option>PDF</option>
+              <option>HTML</option>
+              <option>TXT</option>
+              <option>DOCX</option>
+              <option>CSV</option>
+              <option>JSON</option>
+              <option>Markdown</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Options -->
+      <div>
+        <!-- PDF Options -->
+        <div class="card" id="opt-pdf">
+          <div class="sec-title">PDF Options</div>
+          <div class="field">
+            <label>Font Size — <span id="fs-val">12</span>px</label>
+            <div class="range-wrap">
+              <input type="range" id="g-fs" min="8" max="32" value="12"
+                     oninput="document.getElementById('fs-val').textContent=this.value"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Page Size</label>
+            <div class="radio-group">
+              <div class="radio-opt selected" onclick="selectRadio(this,'g-ps')">A4</div>
+              <div class="radio-opt" onclick="selectRadio(this,'g-ps')">Letter</div>
+            </div>
+            <input type="hidden" id="g-ps" value="A4"/>
+          </div>
+          <div class="field">
+            <label>Background Color</label>
+            <div class="color-wrap">
+              <input type="color" id="g-bg-pick" value="#ffffff" oninput="syncColor('g-bg-pick','g-bg-hex')"/>
+              <input type="text" class="color-hex" id="g-bg-hex" value="#ffffff" oninput="syncHex('g-bg-hex','g-bg-pick')" maxlength="7"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Text Color</label>
+            <div class="color-wrap">
+              <input type="color" id="g-tc-pick" value="#000000" oninput="syncColor('g-tc-pick','g-tc-hex')"/>
+              <input type="text" class="color-hex" id="g-tc-hex" value="#000000" oninput="syncHex('g-tc-hex','g-tc-pick')" maxlength="7"/>
+            </div>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="g-brd"/>
+            <label for="g-brd">Add Border</label>
+          </div>
+        </div>
+
+        <!-- HTML Options -->
+        <div class="card" id="opt-html" style="display:none;">
+          <div class="sec-title">HTML Options</div>
+          <div class="field">
+            <label>Theme</label>
+            <select id="g-theme"><option>Light</option><option>Dark</option><option>Ocean</option><option>Sunset</option></select>
+          </div>
+          <div class="field">
+            <label>Font Family</label>
+            <select id="g-font"><option>Default</option><option>Serif</option><option>Mono</option><option>Modern</option></select>
+          </div>
+          <div class="field">
+            <label>Custom CSS</label>
+            <textarea id="g-css" rows="3" placeholder="h1 { color: red; }"></textarea>
+          </div>
+        </div>
+
+        <!-- TXT Options -->
+        <div class="card" id="opt-txt" style="display:none;">
+          <div class="sec-title">TXT Options</div>
+          <div class="check-row">
+            <input type="checkbox" id="g-ln"/>
+            <label for="g-ln">Add Line Numbers</label>
+          </div>
+          <div class="field" style="margin-top:12px;">
+            <label>Line Separator</label>
+            <select id="g-sep"><option>None</option><option>Dashes</option><option>Equals</option><option>Stars</option></select>
+          </div>
+        </div>
+
+        <!-- DOCX Options -->
+        <div class="card" id="opt-docx" style="display:none;">
+          <div class="sec-title">DOCX Options</div>
+          <div class="field">
+            <label>Font</label>
+            <select id="g-df"><option>Arial</option><option>Times New Roman</option><option>Calibri</option></select>
+          </div>
+          <div class="field">
+            <label>Alignment</label>
+            <select id="g-da"><option>Left</option><option>Center</option><option>Right</option><option>Justify</option></select>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="g-db" checked/>
+            <label for="g-db">Bold Title</label>
+          </div>
+        </div>
+
+        <!-- CSV Options -->
+        <div class="card" id="opt-csv" style="display:none;">
+          <div class="sec-title">CSV Options</div>
+          <div class="field">
+            <label>Delimiter</label>
+            <select id="g-cd"><option>Comma</option><option>Tab</option><option>Semicolon</option><option>Pipe</option></select>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button class="btn btn-primary" id="g-btn" onclick="doGenerate()" style="width:100%;">
+          🚀 Generate File
+        </button>
+
+        <div id="g-status" class="status"></div>
+        <div id="g-download" class="download-area">
+          <div style="color:var(--muted);font-size:11px;margin-bottom:10px;letter-spacing:1px;">FILE READY</div>
+          <a id="g-dl-link" href="#" target="_blank">⬇️ Download File</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ READ ════════ -->
+  <div id="tab-read" class="tab-pane">
+    <div class="card">
+      <div class="sec-title">Authentication</div>
+      <div class="field">
+        <label>🔑 API Key</label>
+        <input type="password" id="r-key" value="raxzen_file_create_key"/>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-title">Upload File</div>
+      <div class="file-drop" onclick="document.getElementById('r-file-input').click()">
+        <input type="file" id="r-file-input" accept=".pdf,.docx,.html,.csv,.json"
+               onchange="onFileSelect()" style="display:none"/>
+        <div class="file-drop-icon">📂</div>
+        <div class="file-drop-text">Click to upload — PDF, DOCX, HTML, CSV, JSON</div>
+        <div class="file-drop-name" id="r-file-name"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <button class="btn btn-primary" id="r-btn" onclick="doRead()">📖 Read File</button>
+    </div>
+    <div id="r-status" class="status"></div>
+    <div class="card" style="margin-top:12px;" id="r-result-card" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div class="sec-title" style="margin-bottom:0;">Extracted Content</div>
+        <span id="r-info" class="tag"></span>
+      </div>
+      <div id="r-out">Extracted content will appear here…</div>
+    </div>
+  </div>
+
+  <!-- ════════ EDIT ════════ -->
+  <div id="tab-edit" class="tab-pane">
+    <div class="card">
+      <div class="sec-title">Authentication</div>
+      <div class="field">
+        <label>🔑 API Key</label>
+        <input type="password" id="e-key" value="raxzen_file_create_key"/>
+      </div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="card" style="height:100%;">
+          <div class="sec-title">Input Text</div>
+          <textarea id="e-in" rows="14" placeholder="Paste your text here…"></textarea>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="sec-title">Action</div>
+          <div class="field">
+            <select id="e-act" onchange="onActionChange()">
+              <option>Find &amp; Replace</option>
+              <option>Add Prefix/Suffix</option>
+              <option>UPPERCASE</option>
+              <option>lowercase</option>
+              <option>Title Case</option>
+              <option>Remove Extra Spaces</option>
+              <option>Remove Empty Lines</option>
+              <option>Word Wrap</option>
+              <option>Reverse Lines</option>
+              <option>Sort Lines A-Z</option>
+              <option>Numbered Lines</option>
+              <option>Count Words</option>
+            </select>
+          </div>
+
+          <!-- Find & Replace -->
+          <div id="opt-find" class="">
+            <div class="field">
+              <label>Find</label>
+              <input type="text" id="e-find" placeholder="Text to find"/>
+            </div>
+            <div class="field">
+              <label>Replace with</label>
+              <input type="text" id="e-repl" placeholder="Replacement text"/>
+            </div>
+          </div>
+
+          <!-- Prefix/Suffix -->
+          <div id="opt-pre" style="display:none;">
+            <div class="field">
+              <label>Prefix</label>
+              <input type="text" id="e-pre" placeholder=">> "/>
+            </div>
+            <div class="field">
+              <label>Suffix</label>
+              <input type="text" id="e-suf" placeholder=" <<"/>
+            </div>
+          </div>
+
+          <!-- Word Wrap -->
+          <div id="opt-wrap" style="display:none;">
+            <div class="field">
+              <label>Wrap Width</label>
+              <input type="number" id="e-wrap" value="80" min="20" max="200"/>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="e-btn" onclick="doEdit()" style="width:100%;margin-top:12px;">
+          ⚡ Apply
+        </button>
+        <div id="e-status" class="status"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="sec-title">Result</div>
+      <textarea id="e-out" rows="10" readonly style="background:var(--surface2);"></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="copyResult()">📋 Copy</button>
+        <button class="btn btn-secondary" onclick="sendToInput()">↩ Use as Input</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ API DOCS ════════ -->
+  <div id="tab-apidocs" class="tab-pane">
+    <div class="card">
+      <h3>📡 API Reference</h3>
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;">
+        This tool connects directly to the Hugging Face Space via the Gradio JS Client.
+        You can also call it from your own website.
+      </p>
+      <div class="field">
+        <label>Space URL</label>
+        <div class="endpoint">https://Rafidmondal-allfile-tool.hf.space</div>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>Space ID</label>
+        <code style="color:var(--accent);">Rafidmondal/allfile-tool</code>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>API Key</label>
+        <code style="color:var(--accent3);">raxzen_file_create_key</code>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Generate File — <span class="api-method">POST</span><code>/api_generate</code></h3>
+      <pre><code>import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+const client = await Client.connect("Rafidmondal/allfile-tool");
+
+const result = await client.predict("/api_generate", {
+  api_key:       "raxzen_file_create_key",
+  text:          "Hello World!",
+  title:         "My Document",
+  file_type:     "PDF",          // PDF | HTML | TXT | DOCX | CSV | JSON | Markdown
+  font_size:     12,
+  page_size:     "A4",           // A4 | Letter
+  bg_color:      "#ffffff",
+  text_color:    "#000000",
+  add_border:    false,
+  html_theme:    "Light",        // Light | Dark | Ocean | Sunset
+  font_family:   "Default",      // Default | Serif | Mono | Modern
+  custom_css:    "",
+  add_line_numbers: false,
+  line_separator:  "None",       // None | Dashes | Equals | Stars
+  docx_font:       "Arial",
+  bold_title:      true,
+  docx_alignment:  "Left",       // Left | Center | Right | Justify
+  csv_delimiter:   "Comma"       // Comma | Tab | Semicolon | Pipe
+});
+
+// result.data = [file_object, status_string]
+const fileUrl = result.data[0].url;
+window.open(fileUrl, "_blank");</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>Read File — <span class="api-method" style="background:var(--accent2);">POST</span><code>/api_read</code></h3>
+      <pre><code>const result = await client.predict("/api_read", {
+  api_key: "raxzen_file_create_key",
+  file:    fileBlob   // File / Blob object
+});
+
+// result.data = [content_text, info_string]
+const text = result.data[0];
+const info = result.data[1]; // e.g. "📄 PDF | 3421 chars"</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>Edit Text — <span class="api-method" style="background:var(--accent3);">POST</span><code>/api_edit</code></h3>
+      <pre><code>const result = await client.predict("/api_edit", {
+  api_key:      "raxzen_file_create_key",
+  text:         "your text here",
+  action:       "UPPERCASE",
+  // Optional: find_text, replace_text, prefix, suffix, wrap_width
+});
+
+const editedText = result.data[0];</code></pre>
+    </div>
+
+    <div class="card">
+      <h4>Python Example</h4>
+      <pre><code>from gradio_client import Client
+
+client = Client("Rafidmondal/allfile-tool")
+
+file_path, status = client.predict(
+    api_key="raxzen_file_create_key",
+    text="Hello World",
+    title="My Doc",
+    file_type="PDF",
+    font_size=12,
+    page_size="A4",
+    bg_color="#ffffff",
+    text_color="#000000",
+    add_border=False,
+    html_theme="Light",
+    font_family="Default",
+    custom_css="",
+    add_line_numbers=False,
+    line_separator="None",
+    docx_font="Arial",
+    bold_title=True,
+    docx_alignment="Left",
+    csv_delimiter="Comma",
+    api_name="/api_generate"
+)
+print(status)    # ✅ PDF generated!
+print(file_path)</code></pre>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- Gradio Client -->
+<script type="module">
+import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@0.20.1/dist/index.min.js";
+
+const SPACE = "Rafidmondal/allfile-tool";
+let hfClient = null;
+
+async function getClient() {
+  if (!hfClient) {
+    hfClient = await Client.connect(SPACE);
+  }
+  return hfClient;
+}
+
+// ─── HELPERS ───
+function showStatus(id, type, msg) {
+  const el = document.getElementById(id);
+  el.className = `status ${type}`;
+  el.style.display = type === 'loading' ? 'flex' : 'block';
+  el.innerHTML = type === 'loading'
+    ? `<div class="spin"></div>${msg}`
+    : msg;
+}
+function hideStatus(id) {
+  const el = document.getElementById(id);
+  el.style.display = 'none';
+}
+function setBtn(id, disabled, text) {
+  const b = document.getElementById(id);
+  b.disabled = disabled;
+  if (text) b.innerHTML = text;
+}
+
+// ─── GENERATE ───
+window.doGenerate = async function() {
+  const key  = document.getElementById('g-key').value.trim();
+  const text = document.getElementById('g-text').value;
+  const title = document.getElementById('g-title').value;
+  const ft   = document.getElementById('g-type').value;
+
+  if (!text.trim()) { showStatus('g-status','error','❌ Content cannot be empty'); return; }
+
+  setBtn('g-btn', true, '⏳ Generating…');
+  showStatus('g-status','loading','Connecting to server…');
+  document.getElementById('g-download').classList.remove('show');
+
+  try {
+    const client = await getClient();
+    showStatus('g-status','loading',`Generating ${ft} file…`);
+
+    const params = {
+      api_key:     key,
+      text:        text,
+      title:       title,
+      file_type:   ft,
+      font_size:   parseInt(document.getElementById('g-fs').value),
+      page_size:   document.getElementById('g-ps').value,
+      bg_color:    document.getElementById('g-bg-hex').value,
+      text_color:  document.getElementById('g-tc-hex').value,
+      add_border:  document.getElementById('g-brd').checked,
+      html_theme:  document.getElementById('g-theme').value,
+      font_family: document.getElementById('g-font').value,
+      custom_css:  document.getElementById('g-css').value,
+      add_line_numbers: document.getElementById('g-ln').checked,
+      line_separator:   document.getElementById('g-sep').value,
+      docx_font:        document.getElementById('g-df').value,
+      bold_title:       document.getElementById('g-db').checked,
+      docx_alignment:   document.getElementById('g-da').value,
+      csv_delimiter:    document.getElementById('g-cd').value,
+    };
+
+    const result = await client.predict("/api_generate", params);
+    const [fileObj, statusMsg] = result.data;
+
+    if (!fileObj) {
+      showStatus('g-status','error', statusMsg || '❌ Generation failed');
+    } else {
+      showStatus('g-status','success', statusMsg || `✅ ${ft} generated!`);
+      const url = fileObj.url || fileObj;
+      const dl = document.getElementById('g-dl-link');
+      dl.href = url;
+      dl.download = `output.${ft.toLowerCase()}`;
+      dl.textContent = `⬇️ Download ${ft} File`;
+      document.getElementById('g-download').classList.add('show');
+    }
+  } catch(e) {
+    showStatus('g-status','error','❌ Error: ' + e.message);
+  } finally {
+    setBtn('g-btn', false, '🚀 Generate File');
+  }
+};
+
+// ─── READ ───
+window.doRead = async function() {
+  const key   = document.getElementById('r-key').value.trim();
+  const input = document.getElementById('r-file-input');
+  if (!input.files.length) { showStatus('r-status','error','❌ No file selected'); return; }
+  const file = input.files[0];
+
+  const ext = file.name.split('.').pop().toLowerCase();
+  const supported = ['pdf','docx','html','htm','txt','md','csv','json'];
+  if (!supported.includes(ext)) {
+    showStatus('r-status','error',`❌ Unsupported: .${ext} — Supported: PDF, DOCX, HTML, TXT, CSV, JSON`);
+    return;
+  }
+
+  setBtn('r-btn', true, '⏳ Uploading…');
+  showStatus('r-status','loading',`Uploading ${ext.toUpperCase()} file to server…`);
+
+  try {
+    // Step 1: Upload file directly to HF Space upload endpoint
+    const UPLOAD_URL = 'https://rafidmondal-allfile-tool.hf.space/upload';
+    const fd = new FormData();
+    fd.append('files', file, file.name);
+
+    const upResp = await fetch(UPLOAD_URL, { method: 'POST', body: fd });
+    if (!upResp.ok) throw new Error(`Upload failed (${upResp.status}) — Space may be sleeping, try again`);
+    const upData  = await upResp.json();   // ["tmp/.../filename.pdf"]
+    const tmpPath = upData[0];
+
+    showStatus('r-status','loading',`Reading ${ext.toUpperCase()} content…`);
+
+    // Step 2: predict with the server-side path as file object
+    const client = await getClient();
+    const result = await client.predict('/api_read', [
+      key,
+      { path: tmpPath, orig_name: file.name, size: file.size, mime_type: file.type || '' }
+    ]);
+
+    const [textContent, info] = result.data;
+
+    if (!textContent || textContent.startsWith('❌')) {
+      showStatus('r-status','error', textContent || '❌ Server failed to read file');
+    } else {
+      hideStatus('r-status');
+      document.getElementById('r-out').textContent = textContent;
+      document.getElementById('r-info').textContent = info || '';
+      document.getElementById('r-result-card').style.display = 'block';
+      showStatus('r-status','success', `✅ ${info || 'Done!'}`);
+      setTimeout(() => hideStatus('r-status'), 3000);
+    }
+  } catch(e) {
+    showStatus('r-status','error','❌ ' + e.message);
+  } finally {
+    setBtn('r-btn', false, '📖 Read File');
+  }
+};
+// ─── EDIT ───
+window.doEdit = async function() {
+  const key    = document.getElementById('e-key').value.trim();
+  const text   = document.getElementById('e-in').value;
+  const action = document.getElementById('e-act').value;
+
+  if (!text.trim()) { showStatus('e-status','error','❌ Input text is empty'); return; }
+
+  setBtn('e-btn', true, '⏳ Processing…');
+  showStatus('e-status','loading','Applying action…');
+
+  try {
+    const client = await getClient();
+    const result = await client.predict("/api_edit", {
+      api_key:      key,
+      text:         text,
+      action:       action,
+      find_text:    document.getElementById('e-find').value,
+      replace_text: document.getElementById('e-repl').value,
+      prefix:       document.getElementById('e-pre').value,
+      suffix:       document.getElementById('e-suf').value,
+      wrap_width:   parseInt(document.getElementById('e-wrap').value) || 80,
+    });
+    const out = result.data[0];
+    document.getElementById('e-out').value = out;
+    showStatus('e-status','success','✅ Done!');
+    setTimeout(() => hideStatus('e-status'), 2000);
+  } catch(e) {
+    showStatus('e-status','error','❌ Error: ' + e.message);
+  } finally {
+    setBtn('e-btn', false, '⚡ Apply');
+  }
+};
+
+window.copyResult = function() {
+  const t = document.getElementById('e-out').value;
+  navigator.clipboard.writeText(t).then(() => {
+    showStatus('e-status','success','✅ Copied to clipboard!');
+    setTimeout(() => hideStatus('e-status'), 2000);
+  });
+};
+
+window.sendToInput = function() {
+  document.getElementById('e-in').value = document.getElementById('e-out').value;
+};
+</script>
+
+<script>
+// ─── TAB SWITCHING ───
+function switchTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ─── FILE TYPE TOGGLE ───
+function onTypeChange() {
+  const ft = document.getElementById('g-type').value;
+  ['pdf','html','txt','docx','csv'].forEach(t => {
+    document.getElementById('opt-' + t).style.display =
+      (ft.toLowerCase() === t || (ft === 'JSON' && t === 'pdf') || (ft === 'Markdown' && t === 'pdf'))
+        ? (ft.toLowerCase() === t ? 'block' : 'none') : 'none';
+  });
+  document.getElementById('opt-pdf').style.display   = ft === 'PDF' ? 'block' : 'none';
+  document.getElementById('opt-html').style.display  = ft === 'HTML' ? 'block' : 'none';
+  document.getElementById('opt-txt').style.display   = ft === 'TXT' ? 'block' : 'none';
+  document.getElementById('opt-docx').style.display  = ft === 'DOCX' ? 'block' : 'none';
+  document.getElementById('opt-csv').style.display   = ft === 'CSV' ? 'block' : 'none';
+}
+
+// ─── RADIO SELECT ───
+function selectRadio(el, inputId) {
+  el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(inputId).value = el.textContent.trim();
+}
+
+// ─── COLOR SYNC ───
+function syncColor(pickId, hexId) {
+  document.getElementById(hexId).value = document.getElementById(pickId).value;
+}
+function syncHex(hexId, pickId) {
+  const v = document.getElementById(hexId).value;
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) document.getElementById(pickId).value = v;
+}
+
+// ─── FILE SELECT ───
+function onFileSelect() {
+  const f = document.getElementById('r-file-input').files[0];
+  document.getElementById('r-file-name').textContent = f ? '📎 ' + f.name : '';
+}
+
+// ─── ACTION CHANGE ───
+function onActionChange() {
+  const act = document.getElementById('e-act').value;
+  document.getElementById('opt-find').style.display = act === 'Find & Replace' ? 'block' : 'none';
+  document.getElementById('opt-pre').style.display  = act === 'Add Prefix/Suffix' ? 'block' : 'none';
+  document.getElementById('opt-wrap').style.display = act === 'Word Wrap' ? 'block' : 'none';
+}
+</script>
+</body>
+</html>
